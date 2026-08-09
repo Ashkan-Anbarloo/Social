@@ -1,0 +1,16 @@
+{% extends "parent/base.html" %}
+{% block title %}List Following/ers User{% endblock title %}
+{% block content %}
+<h3>List  {{ status }} For {{ user.username }}</h3>
+<ul>
+    {% for u in users_list %}
+        <li>
+            <a href="{{ u.get_absolute_url }}">{{ u.username }}</a>
+        </li>
+    {% empty %}
+        <li>هیچ موردی یافت نشد.</li>
+    {% endfor %}
+</ul>
+<a href="{{ user.get_absolute_url }}">بازگشت به پروفایل</a>
+
+{% endblock content %}

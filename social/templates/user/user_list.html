@@ -1,0 +1,22 @@
+{% extends "parent/base.html" %}
+{% load thumbnail %}
+{% load static %}
+{% block title %}{% endblock title %}
+{% block content %}
+    <p>login by : {{request.user.username}}</p><br><br>
+    {% for user in users %}
+    {% if user.photo %}
+    <a href="{{user.get_absolute_url}}">
+        <img src='{% thumbnail user.photo 200x200 quality=80 %}' style='width:200p;'>
+    </a>
+    {% else %}
+    <a href="{{user.get_absolute_url}}">
+        <img src='{% static "images/profile/images.jpg" %}'>
+    </a>
+    {% endif %}
+    <a href="{{user.get_absolute_url}}">
+        {{ user.get_full_name }}
+    </a>
+    <br><br>
+    {% endfor %}
+{% endblock content %}

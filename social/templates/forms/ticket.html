@@ -1,0 +1,17 @@
+{% extends "parent/base.html" %}
+{% block title %}ticket form{% endblock title %}
+{% block content %}
+{% comment %} {% if sent %}
+    <p>sent to Email is Ok</p>
+{% endif %} {% endcomment %}
+{% if messages %}
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+{% endif %}
+<form method='post'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type='submit' value='ENTER'>
+</form>
+{% endblock content %}

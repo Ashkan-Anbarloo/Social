@@ -1,0 +1,14 @@
+{% extends "parent/base.html" %}
+{% block title %}Login{% endblock title %}
+{% block content %}
+<p>pls inter your informations</p>
+<form method='post'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type='hidden' name='text' value='{{next}}'>
+    <input type='submit' value='Enter'>
+</form>
+<br>
+{% comment %} <a href='{% url "social:password_change" %}'>Password Change</a> {% endcomment %}
+<p><a href='{% url "social:password_reset" %}'>Reset password</a></p>
+{% endblock content %}

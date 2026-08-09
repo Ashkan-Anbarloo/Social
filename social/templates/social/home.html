@@ -1,0 +1,32 @@
+{% extends "parent/base.html" %}
+{% load static %}
+{% load thumbnail %}
+{% block title %}HOME{% endblock title %}
+{% block content %}
+{% with user=request.user %}
+<p>{{user.get_full_name}}</p>
+{% if user.photo %}
+<a>
+    <img src='{% thumbnail user.photo 300x300 quality=100 %}' style='width:200p;'>
+    {% comment %} <img src="{{ user.photo.url }}" style="width:200px;"> {% endcomment %}
+</a>
+{% else %}
+    <img src='{% static "images/profile/images.jpg" %}'>
+{% endif %}
+{% endwith %}
+
+<a href='{% url "social:password_change" %}'>Password Change</a>
+<br><br><br>
+<h2>All Saved Post</h2>
+<ul>
+    {% for post in saved_posts %}
+        <a href='{{post.get_absolute_url}}'>
+            {{post.description|truncatechars:20|linebreaks}}
+        </a>
+        publish at {{post.created}} by {{post.author}}
+        <br><br><hr>
+    {% endfor %}
+</ul>
+{% endblock content %}
+
+

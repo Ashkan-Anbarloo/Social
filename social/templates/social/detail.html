@@ -1,0 +1,160 @@
+{% extends "parent/base.html" %}
+{% block title %}Post Detail{% endblock title %}
+{% block content %}
+<h1>post detail</h1>
+<div class='post' data-post-id='{{post.id}}'>
+    <p>{{post.description|linebreaks}}</p>
+    <button class='like-button'>
+        {% if request.user in post.likes.all %}
+            Unlike
+        {% else %}
+            Like
+        {% endif %}
+    </button>
+    <span class='likes-count'>{{post.likes.count}} Like</span>
+</div>
+<div>
+    <button class='save-post'>
+        {% if user in post.saved_by.all %}
+            Unsave
+        {% else %}
+            Save 
+        {% endif %}
+    </button>
+</div>
+
+
+<br>
+{% for tag in post.tags.all %}
+    <a href='{% url "social:post_list_by_tag" tag.slug%}'>{{tag.name}}</a>
+    {% if not forloop.last %}, {% endif %}
+{% endfor %}
+<br><br><br>
+
+
+<h3 id='comment-count' class='comment-count'>Comments : {{post.comments.count}}</h3>
+<div id="comments-container">
+    {% for comment in post.comments.all %}
+        <div class="comment-item">
+            <p><strong>{{ comment.name }}</strong> - {{ comment.created }}</p>
+            <p>{{ comment.body|linebreaks }}</p>
+        </div>
+        <br><br>
+    {% empty %}
+        <p id="no-comments">No comments yet.</p>
+    {% endfor %}
+</div>
+<br>
+{% comment %} action='{% url "social:post_comment" post.id %}' {% endcomment %}
+<form method='post' id="comment-form"> 
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type='submit' value="ADD Comment">
+</form>
+<br>
+<hr>
+
+
+
+<h3>Similar Posts</h3>
+{% for post in similar_post %}
+<a href='{{post.get_absolute_url}}'>{{post.description|truncatechars:10}}</a><br>
+{% endfor %}
+<br>
+<br>
+
+
+{% for img in post.images.all %}
+    <img with='300px' height='300px' src="{{img.image.url}}">
+{% endfor %}
+<br><br>
+
+
+
+
+
+
+<div>
+    <a href="{% url 'social:post_share' post.id %}" class="btn-share">
+        اشتراک‌گذاری این پست با ایمیل
+    </a>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js" integrity="sha512-YuCuk5nNmVIUfKROKeV3fpZZ5Vt9vsnq8nExr5JwEJc2r1YDVmDfujcq373eHIzjqdxwCzoKpxngIaAdRUyg3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function(){
+        $('.like-button').click(function(){
+            var post_id = $(this).closest('.post').data('post-id');
+            var button = $(this);
+            var csrfToken = '{{csrf_token}}';
+
+            $.ajax({
+                type:'POST',
+                url:'{% url "social:like_post" %}',
+                data:{'post_id':post_id , 'csrfmiddlewaretoken':csrfToken},
+                success : function(data){
+                    if(data.liked){
+                        button.text('Unlike');
+                    }else{
+                        button.text('Like');
+                    }
+                    $('.likes-count').text(data.liked_count + 'like');
+                },
+            });
+        });
+        $('.save-post').click(function(){
+            var button = $(this);
+            $.ajax({
+                type : 'POST',
+                url : '/save_post/',
+                data : {'csrfmiddlewaretoken':'{{csrf_token}}' , 'post_id':{{post.id}}},
+                success : function(data){
+                    if(data.saved){
+                        button.text('Unsave');
+                    }else{
+                        button.text('Save')
+                    }
+                },
+                error : function(error){
+                    console.log(':Ajax خطا در ارسال درخواست ' + error)
+                }
+            });
+        });
+
+        $('#comment-form').on('submit', function (e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var formData = form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: window.location.href,
+                data: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $('#no-comments').remove();
+
+                        $('#comments-container').append(`
+                            <div class="comment-item">
+                                <p><strong>${data.name}</strong> - ${data.created}</p>
+                                <p>${data.body}</p>
+                            </div>
+                            <br><br>
+                        `);
+
+                        $('.comment-count').text('Comments: ' + data.count);
+                        form[0].reset();
+                    }
+                },
+                error: function (error) {
+                    console.log('Ajax comment error: ' + error);
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}

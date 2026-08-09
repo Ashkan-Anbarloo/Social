@@ -1,0 +1,26 @@
+{% extends "parent/base.html" %}
+{% block title %}Tickets{% endblock title %}
+{% block content %}
+<h1>تمام تیکت‌ها</h1>
+
+    {% for ticket in tickets %}
+        <div style="border:1px solid #ccc; padding:15px; margin-bottom:15px;">
+            <p><strong>نام:</strong> {{ ticket.name }}</p>
+            <p><strong>ایمیل:</strong> {{ ticket.email }}</p>
+            <p><strong>موضوع:</strong> {{ ticket.subject }}</p>
+            <p><strong>پیام:</strong> {{ ticket.message }}</p>
+
+            {% if ticket.answer %}
+                <div style="margin-top:10px; background:#f0fff0; padding:10px;">
+                    <strong>پاسخ ادمین:</strong>
+                    <p>{{ ticket.answer }}</p>
+                </div>
+            {% else %}
+                <p style="color:gray;">هنوز پاسخی ثبت نشده.</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>هنوز تیکتی ثبت نشده.</p>
+    {% endfor %}
+
+{% endblock content %}

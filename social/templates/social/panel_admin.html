@@ -1,0 +1,25 @@
+{% extends "parent/base.html" %}
+{% block title %}Profile{% endblock title %}
+{% block content %}
+<table style='width:80% ; border:2px solid black; text-align:right; direction:rtl;'>
+    <tr>
+        <th>ردیف</th>
+        <th>مشاهده</th>
+        <th>ویرایش</th>
+        <th>حذف</th>
+    </tr>
+    {% for post in posts %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href='{{post.get_absolute_url}}'>{{post.description}}</a></td>
+            <td><a href='{% url "social:edit_post" post.id%}'>ویرایش</a></td>
+            <td><a href='{% url "social:delete_post" post.id%}'>حذف</a></td>
+        </tr>
+    {% endfor %}
+</table>
+<a href='{% url "social:password_change" %}'>Password Change</a>
+<br>
+<a href='{% url "social:logout" %}'>Logout</a>
+<br><br>
+{% comment %} <a href='{% url "social:edit_account" %}'>Edit Account</a> {% endcomment %}
+{% endblock content %}

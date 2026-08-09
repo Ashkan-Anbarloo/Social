@@ -1,0 +1,10 @@
+{% extends "parent/base.html" %}
+{% block title %}Post Delete{% endblock title %}
+{% block content %}
+<h2>Are you sure ?!</h2>
+<form method='post'>
+    {% csrf_token %}
+    <input type='submit' value='delete'>
+</form>
+<a href='{% url "social:panel_admin" %}'>back to panel_admin</a>
+{% endblock content %}

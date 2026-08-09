@@ -1,0 +1,17 @@
+{% extends "parent/base.html" %}
+{% block title %}Share Post{% endblock title %}
+{% block content %}
+{% if sent %}
+    <h1>ایمیل با موفقیت ارسال شد!</h1>
+    <p>Post  "{{ post.description }}" sented for {{ form.cleaned_data.to }}</p>
+{% else %}
+    <h1>اشتراک‌گذاری پست: "{{ post.description }}"</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="ارسال ایمیل">
+    </form>
+{% endif %}
+<br>
+<a href="{{ post.get_absolute_url }}">بازگشت به پست</a>
+{% endblock content %}
